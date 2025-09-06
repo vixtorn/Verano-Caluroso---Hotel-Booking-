@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rezervasyon – Verano Caluroso Luxury Hotels</title>
+  <meta name="description" content="Check-in ve check-out tarihlerinizi seçin, uygun oda ve fiyatları görün." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="index.html">
+        <img src="https://png.pngtree.com/png-clipart/20200727/original/pngtree-receptionist-bell-hotel-logo-design-png-image_5294385.jpg" alt="Verano Caluroso Logo" loading="lazy">
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Ana Sayfa</a></li>
+        <li><a class="active" href="rooms.html">Rezervasyon</a></li>
+        <li><a href="services.html">Hizmetlerimiz</a></li>
+        <li><a href="about.html">Hakkımızda</a></li>
+        <li><a href="press.html">Basında Biz</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="booking">
+      <div class="booking-widget">
+        <h1>Rezervasyon</h1>
+
+        <form id="bookingForm" novalidate>
+          <div class="grid">
+            <label>
+              <span>Giriş (Check-in)</span>
+              <input id="checkin" name="checkin" type="text" placeholder="gg.aa.yyyy" autocomplete="off" required />
+            </label>
+
+            <label>
+              <span>Çıkış (Check-out)</span>
+              <input id="checkout" name="checkout" type="text" placeholder="gg.aa.yyyy" autocomplete="off" required />
+            </label>
+
+            <label>
+              <span>Oda Tipi</span>
+              <select id="roomType" name="roomType">
+                <option value="normal">Normal Oda</option>
+                <option value="deluxe">Deluxe Oda</option>
+                <option value="king">Kral Odası</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Misafir</span>
+              <select id="guests" name="guests">
+                <option>1</option><option selected>2</option><option>3</option><option>4</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="inline">
+            <button type="button" id="btnCheck">Müsaitlik Sorgula</button>
+            <div id="nights" class="muted">Gece: 0</div>
+          </div>
+
+          <div id="availability" class="availability"></div>
+
+          <div class="summary" id="summary" hidden>
+            <h2>Özet</h2>
+            <ul>
+              <li><strong>Tarih:</strong> <span id="sumDates">-</span> (<span id="sumNights">0</span> gece)</li>
+              <li><strong>Oda:</strong> <span id="sumRoom">-</span></li>
+              <li><strong>Misafir:</strong> <span id="sumGuests">-</span></li>
+              <li><strong>Gecelik Fiyat:</strong> <span id="sumNightPrice">-</span></li>
+              <li><strong>Toplam:</strong> <span id="sumTotal">-</span></li>
+            </ul>
+            <button type="submit" id="btnReserve">Rezervasyonu Tamamla</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-info">
+      <p>© 2025 Verano Caluroso Luxury Hotels</p>
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+
+  
+  <script src="scripts.js"></script>
+
+  
+  <script>
+(() => {
+  const API_BASE = 'http://localhost:3000';
+
+  
+  const checkin  = document.getElementById('checkin');
+  const checkout = document.getElementById('checkout');
+  const roomType = document.getElementById('roomType');
+  const guests   = document.getElementById('guests');
+  const nightsEl = document.getElementById('nights');
+  const availabilityEl = document.getElementById('availability');
+  const summaryEl = document.getElementById('summary');
+  const form = document.getElementById('bookingForm');
+  const btnCheck = document.getElementById('btnCheck');
+  const btnReserve = document.getElementById('btnReserve');
+
+  const sumDates = document.getElementById('sumDates');
+  const sumNights = document.getElementById('sumNights');
+  const sumRoom = document.getElementById('sumRoom');
+  const sumGuests = document.getElementById('sumGuests');
+  const sumNightPrice = document.getElementById('sumNightPrice');
+  const sumTotal = document.getElementById('sumTotal');
+
+  //date section
+  const today = new Date();
+  const fpIn = flatpickr(checkin, {
+    locale: 'tr',
+    minDate: today,
+    dateFormat: 'd.m.Y',
+    onChange: (selected) => {
+      if (selected[0]) {
+        fpOut.set('minDate', new Date(selected[0].getTime() + 86400000));
+        if (!fpOut.selectedDates[0]) {
+          fpOut.setDate(new Date(selected[0].getTime() + 86400000), true);
+        }
+        updateNights();
+      }
+    }
+  });
+  const fpOut = flatpickr(checkout, {
+    locale: 'tr',
+    minDate: new Date(today.getTime() + 86400000),
+    dateFormat: 'd.m.Y',
+    onChange: updateNights
+  });
+
+  
+  const toISO = d => d.toISOString().slice(0,10);
+  function diffNights() {
+    const a = fpIn.selectedDates[0], b = fpOut.selectedDates[0];
+    if (!a || !b) return 0;
+    return Math.max(0, Math.round((b - a) / 86400000));
+  }
+  function updateNights(){ nightsEl.textContent = `Gece: ${diffNights()}`; }
+  function tl(x){ return new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY',maximumFractionDigits:0}).format(x); }
+  function showAvail(type, msg) {
+    availabilityEl.className = `availability ${type}`;
+    availabilityEl.textContent = msg;
+    availabilityEl.style.display = 'block';
+  }
+
+  //availibility sec
+  btnCheck.addEventListener('click', async () => {
+    const start = fpIn.selectedDates[0];
+    const end   = fpOut.selectedDates[0];
+    if (!start || !end || diffNights() < 1) {
+      showAvail('error','Lütfen en az 1 gecelik aralık seçin.');
+      summaryEl.hidden = true;
+      return;
+    }
+
+    const params = new URLSearchParams({
+      checkin: toISO(start),
+      checkout: toISO(end),
+      roomType: roomType.value
+    });
+
+    btnCheck.disabled = true;
+    const oldText = btnCheck.textContent;
+    btnCheck.textContent = 'Sorgulanıyor...';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/availability?${params.toString()}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        showAvail('error', 'Sunucu hatası. Lütfen tekrar deneyin.');
+        summaryEl.hidden = true;
+        return;
+      }
+      if (!data.available) {
+        showAvail('error', 'Üzgünüz, seçtiğiniz tarihler dolu.');
+        summaryEl.hidden = true;
+        return;
+      }
+
+      const n = data.nights ?? diffNights();
+      const nightly = data.nightly ?? 0;
+      const total = n * nightly;
+
+      showAvail('ok', 'Seçtiğiniz tarihler için oda uygun.');
+      sumDates.textContent = `${checkin.value} → ${checkout.value}`;
+      sumNights.textContent = n;
+      sumRoom.textContent = roomType.options[roomType.selectedIndex].textContent;
+      sumGuests.textContent = guests.value;
+      sumNightPrice.textContent = tl(nightly);
+      sumTotal.textContent = tl(total);
+      summaryEl.hidden = false;
+
+    } catch (err) {
+      showAvail('error', 'Ağ hatası. İnternet bağlantınızı kontrol edin.');
+      summaryEl.hidden = true;
+    } finally {
+      btnCheck.disabled = false;
+      btnCheck.textContent = oldText;
+    }
+  });
+
+  //rezervation sec
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const start = fpIn.selectedDates[0];
+    const end   = fpOut.selectedDates[0];
+    const n = diffNights();
+    if (!start || !end || n < 1) {
+      showAvail('error','Lütfen geçerli bir tarih aralığı seçin.');
+      return;
+    }
+
+    const payload = {
+      checkin: toISO(start),
+      checkout: toISO(end),
+      roomType: roomType.value,
+      guests: Number(guests.value),
+      contact: { name:'Misafir', email:'misafir@example.com', phone:'+90...' }
+    };
+
+    btnReserve.disabled = true;
+    const oldText = btnReserve.textContent;
+    btnReserve.textContent = 'Gönderiliyor...';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/book`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(()=> ({}));
+
+      if (res.ok && data.success) {
+        alert(`Rezervasyon alındı.\nNumara: ${data.reservationId}\nToplam: ${data.currency ? data.currency+' ' : ''}${data.total}`);
+      } else if (res.status === 409 || data.error === 'no_inventory') {
+        showAvail('error', 'Üzgünüz, bu sırada kontenjan doldu. Lütfen başka tarih deneyin.');
+      } else if (res.status === 400) {
+        showAvail('error', 'Girilen bilgiler geçersiz görünüyor. Tarih/oda tipini kontrol edin.');
+      } else {
+        showAvail('error', 'Sunucu hatası. Lütfen tekrar deneyin.');
+      }
+    } catch (err) {
+      showAvail('error', 'Ağ hatası. Tekrar deneyin.');
+    } finally {
+      btnReserve.disabled = false;
+      btnReserve.textContent = oldText;
+    }
+  });
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,734 @@
+/*------------------------------------------------------------------
+  Root variables for colors, fonts, and spacing
+------------------------------------------------------------------*/
+:root {
+  --color-skin: #F2D0B3;           /* Warm skin‑tone accent */
+  --color-pastel-bg: #F8F4F0;      /* Light pastel background */
+  --color-text: #333;              /* Dark text for readability */
+  --font-base: 'Helvetica Neue', Arial, sans-serif;
+  --spacing: 1rem;                 /* Base spacing unit */
+}
+
+/*------------------------------------------------------------------
+  Global reset & body styles
+------------------------------------------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-base);
+  background: var(--color-pastel-bg);
+  color: var(--color-text);
+  scroll-behavior: smooth;        /* Enable smooth scrolling */
+}
+
+/*------------------------------------------------------------------
+  Header & Navigation
+------------------------------------------------------------------*/
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing);
+  background: #BFD6E0;
+  opacity: 0.7;
+  z-index: 1;
+  position: sticky;
+  top: 0;
+  
+}
+
+
+header .logo img {
+  height: 50px;                   /* Logo height */
+  opacity: 1;
+  
+}
+
+header nav ul {
+  display: flex;
+  list-style: none;               /* Remove bullets */
+  opacity: 1;
+}
+
+header nav li + li {
+  margin-left: var(--spacing);    /* Spacing between links */
+  opacity: 1;
+}
+
+header nav a {
+  position: relative;
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  transition: color 0.3s ease;
+}
+
+header nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0; /* yazının altına */
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+header nav a:hover {
+  color: white; /* hover’da renk değişimi */
+}
+
+header nav a:hover::after {
+  width: 100%; /* çizgi soldan sağa açılır */
+}
+
+
+
+/*------------------------------------------------------------------
+  Hero Section (Flex‑centered)
+------------------------------------------------------------------*/
+.hero {
+  position: relative;
+  display: flex;                  /* Flex centering */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;                  /* Full viewport height */
+  overflow: hidden;
+  /* removed black fallback so hero-img shows through */
+}
+
+.hero-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;              /* Cover without distortion */
+  z-index: -1;                    /* Send behind heading */
+}
+
+.hero h1 {
+  /* Centered by flex parent */
+  font-size: clamp(32px, 8vw, 80px); /* Responsive size, max 80px */
+  max-inline-size: 900px;            /* Never wider than 800px */
+  max-block-size: 800px;             /* Never taller than 800px */
+  white-space: nowrap;               /* Prevent wrapping */
+  opacity: 0;
+  transform: scale(0);               /* Start hidden & scaled down */
+  transform-origin: center;          /* Scale from center */
+  transition: transform 2s ease, opacity 2s ease;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.hero h1.show {
+  transform: scale(1);               /* Scale to full size */
+  opacity: 1;                        /* Fade in */
+}
+
+/*------------------------------------------------------------------
+  Features Section
+------------------------------------------------------------------*/
+.features {
+  padding: calc(var(--spacing) * 4);
+  background: white;
+}
+
+.features ul {
+  list-style: none;                  /* Remove default bullets */
+}
+
+.features li {
+  margin-bottom: var(--spacing);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 2s ease, transform 2s ease;
+}
+
+.features li.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/*------------------------------------------------------------------
+  Rooms Grid
+------------------------------------------------------------------*/
+.rooms {
+  display: grid;
+  gap: var(--spacing);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  padding: calc(var(--spacing) * 4);
+}
+
+.room-card {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.room-card img {
+  width: 100%;
+  display: block;
+}
+
+.room-card h2 {
+  padding: var(--spacing);
+}
+
+.room-card ul {
+  list-style: disc inside;
+  padding: 0 var(--spacing) var(--spacing);
+}
+
+.room-card:hover,
+.room-card.highlight {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+/*Price styles*/
+.price {
+  font-weight: bold;
+  color: var(--color-skin);
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  align-items: center;
+}
+/*Reservation button styles*/
+.rez{
+  position: absolute;
+  bottom: 10px; /* distance from bottom */
+  right: 10px; /* distance from right */
+  background-color: var(--color-skin); /* example styling */
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/*------------------------------------------------------------------
+  Amenities Grid
+------------------------------------------------------------------*/
+.amenities {
+  display: grid;
+  gap: var(--spacing);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  padding: calc(var(--spacing) * 4);
+}
+
+.amenities article {
+  background: white;
+  border-radius: 8px;
+  padding: var(--spacing);
+  text-align: center;
+}
+
+.amenities img {
+  width: 60px;
+  margin-bottom: var(--spacing);
+}
+
+/*------------------------------------------------------------------
+  Hizmetlerimiz Section: two‑column layout with real buttons
+------------------------------------------------------------------*/
+.services-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing);
+  padding: calc(var(--spacing) * 4);
+  background: white;
+}
+
+.services-list {
+  flex: 1 1 300px;
+  list-style: none;
+}
+
+.services-list li {
+  margin-bottom: var(--spacing);
+}
+
+/* Style the actual button */
+.service-btn {
+  all: unset;                         /* Remove browser defaults */
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;                    /* True click cursor */
+  text-align: left;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.service-btn:hover,
+.service-btn.active {
+  background: var(--color-skin);
+  color: white;
+}
+
+.service-image {
+  flex: 1 1 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  object-fit: contain;
+  background: #fff; /* adds clean border background */
+}
+
+.service-image img {
+  max-width: 100%;
+  height: 40vh;  /*80vh*/
+  width: 40vw;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/*------------------------------------------------------------------
+  Footer
+------------------------------------------------------------------*/
+footer {
+  background: white;
+  padding: var(--spacing);
+  text-align: center;
+}
+
+footer .social-icons img {
+  width: 24px;
+  margin: 0 var(--spacing);
+}
+
+/*------------------------------------------------------------------
+  Features Section: two‑column hover‑preview layout
+------------------------------------------------------------------*/
+.features-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing);
+  padding: calc(var(--spacing) * 4);
+  background: white;
+}
+
+.features-list {
+  flex: 1 1 300px;
+  list-style: none;
+}
+
+.features-list li {
+  margin-bottom: var(--spacing);
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.features-list li:hover {
+  background: var(--color-skin);
+  color: white;
+}
+
+.feature-image {
+  flex: 1 1 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;                        /* Hide until hover */
+  transition: opacity 0.3s ease;
+}
+
+.feature-image.visible {
+  opacity: 1;
+}
+
+.feature-image img {
+  width: 500px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/*About us Styles*/
+
+/* ============================
+   About Pro (scoped styles)
+   ============================ */
+.about-pro {
+  background: #f7f9fb;
+  padding: clamp(2rem, 5vw, 5rem) 1rem;
+}
+
+.about-pro .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: center;
+}
+
+/* Left visual */
+.about-pro .visual {
+  position: relative;
+}
+
+.about-pro .visual img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.08);
+}
+
+.about-pro .visual .frame {
+  position: absolute;
+  inset: 20px;
+  border: 2px solid #d8e3f0;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.about-pro .visual .dots {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 80px;
+  height: 80px;
+  background-image: radial-gradient(#98b6cc 2px, transparent 2px);
+  background-size: 12px 12px;
+  opacity: .6;
+  border-radius: 8px;
+}
+
+.about-pro .badge {
+  position: absolute;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+  padding: .75rem 1rem;
+}
+
+.about-pro .badge small {
+  display: block;
+  font-size: .75rem;
+  opacity: .7;
+  margin-bottom: .25rem;
+}
+
+.about-pro .badge strong {
+  font-size: 1.25rem;
+  letter-spacing: .3px;
+}
+
+.about-pro .badge-top {
+  top: 18%;
+  right: 6%;
+}
+
+.about-pro .badge-bottom {
+  left: 6%;
+  bottom: 8%;
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.about-pro .badge-bottom .avatars {
+  display: inline-flex;
+  gap: .25rem;
+}
+
+.about-pro .badge-bottom .dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(180deg,#cbd7e3,#a9bfd2);
+  display: inline-block;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.12);
+}
+
+.about-pro .badge-bottom .caption {
+  font-size: .9rem;
+  color: #334;
+}
+
+/* Right copy */
+.about-pro .copy h1 {
+  font-size: clamp(28px, 5vw, 56px);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.about-pro .copy p {
+  margin: .75rem 0;
+  color: #444;
+}
+
+.about-pro .bullets {
+  margin: 1rem 0 1.5rem;
+  padding-left: 1.2rem;
+}
+
+.about-pro .bullets li {
+  margin: .4rem 0;
+  list-style: disc;
+}
+
+.about-pro .metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: .75rem;
+  margin: 1.25rem 0 1.75rem;
+}
+
+.about-pro .metric {
+  background: #fff;
+  border: 1px solid #e8eef5;
+  border-radius: 10px;
+  padding: .9rem;
+  text-align: center;
+}
+
+.about-pro .metric strong {
+  display: block;
+  font-size: 1.25rem;
+  color: #111;
+}
+
+.about-pro .metric span {
+  display: block;
+  font-size: .85rem;
+  color: #556;
+  margin-top: .25rem;
+}
+
+/* Buttons (reuse your palette) */
+.about-pro .btn-primary {
+  display: inline-block;
+  background: var(--color-skin, #d9a874);
+  color: #fff;
+  padding: .9rem 1.25rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: .5px;
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,.08);
+}
+
+.about-pro .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0,0,0,.12);
+}
+
+.about-pro .btn-link {
+  margin-left: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #334;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 2px;
+}
+
+.about-pro .cta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .about-pro .container {
+    grid-template-columns: 1fr;
+  }
+  .about-pro .badge-top { top: 12%; right: 5%; }
+}
+
+
+
+/*about.html Version2.0*/
+
+/* ============= About – Scrollable content blocks ============= */
+.about-block {
+  background: #fff;
+  padding: clamp(2rem, 4vw, 4rem) 1rem;
+  border-top: 1px solid #eef2f6;
+}
+.about-block .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: center;
+}
+.about-block.reverse .container { grid-template-columns: 1fr 1.1fr; }
+.about-block .media img {
+  width: 100%;
+  height: 420px;           /* uniform preview height */
+  object-fit: cover;       /* make every image equal-looking */
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.08);
+}
+.about-block .text h2 {
+  font-size: clamp(24px, 4vw, 36px);
+  margin-bottom: .75rem;
+}
+.about-block .text p { margin: .6rem 0; color: #444; }
+.about-block.reverse .container { direction: rtl; }
+.about-block.reverse .text,
+.about-block.reverse .media { direction: ltr; }
+
+/* ============= About – Gallery strip ============= */
+.about-gallery {
+  background: #f7f9fb;
+  padding: clamp(2rem, 4vw, 4rem) 1rem;
+}
+.about-gallery .container { max-width: 1200px; margin: 0 auto; }
+.about-gallery h2 { margin-bottom: 1rem; }
+.about-gallery .grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.about-gallery figure { margin: 0; }
+.about-gallery img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+
+/* ============= About – Values block ============= */
+.about-values {
+  background: #fff;
+  padding: clamp(2rem, 4vw, 4rem) 1rem;
+}
+.about-values .container { max-width: 900px; margin: 0 auto; }
+.about-values h2 { margin-bottom: .75rem; }
+.about-values p { margin: .6rem 0; color: #444; }
+
+/* Responsive */
+@media (max-width: 960px) {
+  .about-block .container,
+  .about-block.reverse .container {
+    grid-template-columns: 1fr;
+    direction: ltr;
+  }
+  .about-block .media img { height: 320px; }
+  .about-gallery .grid { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================
+   Booking Widget
+   ========================== */
+.booking {
+  padding: calc(var(--spacing) * 4);
+}
+
+.booking-widget {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: calc(var(--spacing) * 2);
+  box-shadow: 0 18px 45px rgba(0,0,0,.08);
+}
+
+.booking-widget h1 {
+  margin-bottom: 1rem;
+}
+
+.booking-widget .grid {
+  display: grid;
+  gap: var(--spacing);
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  margin-bottom: var(--spacing);
+}
+
+.booking-widget label {
+  display: grid;
+  gap: .35rem;
+}
+
+.booking-widget input[type="text"],
+.booking-widget select {
+  padding: .7rem .9rem;
+  border-radius: 8px;
+  border: 1px solid #e3e6ea;
+  background: #fafbfc;
+  font: inherit;
+}
+
+.booking-widget .inline {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: .5rem 0 1rem;
+}
+
+.booking-widget button {
+  border: 0;
+  border-radius: 8px;
+  padding: .8rem 1.1rem;
+  background: var(--color-skin);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+
+.booking-widget button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.12);
+}
+
+.booking-widget .muted {
+  color: #667085;
+  font-size: .95rem;
+}
+
+.availability {
+  padding: .9rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: none;
+}
+.availability.ok {
+  display: block;
+  background: #e9f9ef;
+  color: #0c6b30;
+  border: 1px solid #b6e7c6;
+}
+.availability.error {
+  display: block;
+  background: #fff1f1;
+  color: #a42121;
+  border: 1px solid #f1c2c2;
+}
+
+.summary {
+  border-top: 1px dashed #e4e7ec;
+  padding-top: 1rem;
+}
+.summary h2 { margin-bottom: .5rem; }
+.summary ul { list-style: none; padding-left: 0; }
+.summary li { margin: .3rem 0; }
+
+@media (max-width: 720px) {
+  .booking-widget .grid { grid-template-columns: 1fr; }
+}
+
